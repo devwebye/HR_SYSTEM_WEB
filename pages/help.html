@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>دليل التشغيل والمساعدة | نظام إدارة الحضور والانصراف والرواتب</title>
+    <!-- CDN Stylesheets -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
+    <link href="../css/style.css" rel="stylesheet" />
+    <style>
+      .help-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        background: #ffffff;
+        margin-bottom: 24px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .help-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+      }
+      .help-icon-wrapper {
+        min-width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+      }
+      .step-badge {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        background-color: #4f46e5;
+        color: #fff;
+        font-size: 0.85rem;
+      }
+      .table-format {
+        font-size: 0.85rem;
+        background: #fafafa;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hidden element telling JS router -->
+    <div id="help-page-indicator" style="display:none"></div>
+
+    <div class="app-wrapper">
+      <!-- Dynamic Sidebar Container -->
+      <div id="sidebar-container"></div>
+
+      <!-- Main Action Wrapper -->
+      <div class="main-content">
+        <!-- Dynamic Header Container -->
+        <div id="header-container"></div>
+
+        <div class="content-body">
+          
+          <!-- Page Header Info -->
+          <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div>
+              <h3 class="fw-bold m-0 text-dark">دليل تشغيل النظام والمساعدة الفنية 📘</h3>
+              <p class="text-muted m-0">شرح تفصيلي للمستخدم والمسؤول حول دورة العمل اليومية والشهرية ومعالجة بصمات الحضور.</p>
+            </div>
+          </div>
+
+          <!-- Quick Navigation Link Board -->
+          <div class="row g-2 mb-4">
+            <div class="col-6 col-md-3">
+              <a href="#section-workflow" class="btn btn-outline-primary w-100 py-2.5 fw-semibold text-truncate text-start d-flex align-items-center gap-2">
+                <i class="bi bi-list-columns"></i>
+                <span>مسار خطة العمل</span>
+              </a>
+            </div>
+            <div class="col-6 col-md-3">
+              <a href="#section-punches" class="btn btn-outline-primary w-100 py-2.5 fw-semibold text-truncate text-start d-flex align-items-center gap-2">
+                <i class="bi bi-fingerprint"></i>
+                <span>شرح شيت البصمة</span>
+              </a>
+            </div>
+            <div class="col-6 col-md-3">
+              <a href="#section-exceptions" class="btn btn-outline-primary w-100 py-2.5 fw-semibold text-truncate text-start d-flex align-items-center gap-2">
+                <i class="bi bi-shield-exclamation"></i>
+                <span>الحالات الخاصة</span>
+              </a>
+            </div>
+            <div class="col-6 col-md-3">
+              <a href="#section-admin" class="btn btn-outline-primary w-100 py-2.5 fw-semibold text-truncate text-start d-flex align-items-center gap-2">
+                <i class="bi bi-person-gear"></i>
+                <span>دليل مسؤول النظام</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- SECTION 1: Workflow Steps -->
+          <div class="help-card p-4" id="section-workflow" style="border-right: 4px solid #4f46e5;">
+            <div class="d-flex align-items-center gap-3 mb-4">
+              <div class="help-icon-wrapper bg-primary-subtle text-primary">
+                <i class="bi bi-diagram-3-fill"></i>
+              </div>
+              <div>
+                <h4 class="fw-bold text-dark m-0">أولاً: دورة التشغيل الكاملة من الصفر (12 خطوة لتغطية الشهر)</h4>
+                <p class="text-muted small m-0">توضيح الخطوات المنظمة التي يبدأ بها مسؤول الـ HR وحتى نهاية الشهر المالي.</p>
+              </div>
+            </div>
+
+            <div class="row g-4 pt-2">
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-light rounded border h-100">
+                  <span class="step-badge mb-2">1</span>
+                  <h6 class="fw-bold text-dark mb-1">دخول النظام والتهيئة</h6>
+                  <p class="text-muted small m-0">تفتتح الشاشات بالبيانات الأساسية الافتراضية، أو تصفير النظام من الصفحة الرئيسية لإدخال بيانات واقعية لنشاطك.</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-light rounded border h-100">
+                  <span class="step-badge mb-2">2</span>
+                  <h6 class="fw-bold text-dark mb-1">إدخال الموظفين وحفظهم</h6>
+                  <p class="text-muted small m-0">سجّل العاملين وأرقامهم الوظيفية، إداراتهم، ورواتبهم عبر نموذج الإضافة أو استيراد جدول بيانات جماعي بنجاح.</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-light rounded border h-100">
+                  <span class="step-badge mb-2">3</span>
+                  <h6 class="fw-bold text-dark mb-1">تحديد ورديات العمل</h6>
+                  <p class="text-muted small m-0">حدد توقيتات الحضور وصنف الورديات (ثنائية على فترتين للحصول على 4 بصمات، أو مستمرة للحصول على بصمتين).</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-light rounded border h-100">
+                  <span class="step-badge mb-2">4</span>
+                  <h6 class="fw-bold text-dark mb-1">استيراد البصمات الأصلية</h6>
+                  <p class="text-muted small m-0">ارفع ملف البصمة الخام مباشرة (الرقم الوظيفي | اسم الموظف | التاريخ | الوقت) وسيقوم المعالج بتركيب الحضور تفصيلياً.</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-light rounded border h-100">
+                  <span class="step-badge mb-2">5</span>
+                  <h6 class="fw-bold text-dark mb-1">مراجعة شيت الحضور</h6>
+                  <p class="text-muted small m-0">راجع جدول السجلات وتواقيع الدخول والخروج والتقييمات التلقائية للتأطير والغياب والتأخيرات بصرياً.</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-light rounded border h-100">
+                  <span class="step-badge mb-2">6</span>
+                  <h6 class="fw-bold text-dark mb-1">تبرير الغيابات والعمليات</h6>
+                  <p class="text-muted small m-0">اضغط على أي خلية حضور غير متناسقة لتبرير حالتها كإجازة طارئة، أو مهمة عمل، أو مبرر يمنع الخصومات المالية.</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-light rounded border h-100">
+                  <span class="step-badge mb-2">7</span>
+                  <h6 class="fw-bold text-dark mb-1">حفظ وإعادة احتساب الحضور</h6>
+                  <p class="text-muted small m-0">اضغط على زر "حفظ وإعادة احتساب" لتطبيق التغييرات اليدوية وتطويق التبريرات المعتمدة وتصحيح التقييمات الإجمالية.</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-light rounded border h-100">
+                  <span class="step-badge mb-2">8</span>
+                  <h6 class="fw-bold text-dark mb-1">مراجعة كشوفات التحليل</h6>
+                  <p class="text-muted small m-0">راجع إجمالي التأخيرات وأيام الغياب المأخوذة بعين الاعتبار والبديلة قبل الذهاب لدورة احتساب المستحقات المالية.</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-light rounded border h-100">
+                  <span class="step-badge mb-2">9</span>
+                  <h6 class="fw-bold text-dark mb-1">ادخال سجل الإجازات</h6>
+                  <p class="text-muted small m-0">سجّل إجازات الموظفين الطويلة كالإجازة السنوية أو المرضية ليقوم السيستم بتحديث رصيد الإجازة المتبقي للموظف آلياً.</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-light rounded border h-100">
+                  <span class="step-badge mb-2">10</span>
+                  <h6 class="fw-bold text-dark mb-1">إنشاء مسير الرواتب</h6>
+                  <p class="text-muted small m-0">توجه لمسير الرواتب الشهري، اختر الشهر والسيستم سيقرأ الغيابات والتأخيرات ويحسب الخصميات الصافية تلقائياً.</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-light rounded border h-100">
+                  <span class="step-badge mb-2">11</span>
+                  <h6 class="fw-bold text-dark mb-1">تحليل التقارير والمؤشرات</h6>
+                  <p class="text-semibold text-dark mb-1">تحليل الأداء الرقابي عبر تتبع الرسوم التوزيعية للرواتب ونسب الانضباط الشهرية وملاحظة الموظفين غير الملتزمين.</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-light rounded border h-100">
+                  <span class="step-badge mb-2">12</span>
+                  <h6 class="fw-bold text-dark mb-1">تصدير التقارير والطباعة</h6>
+                  <p class="text-muted small m-0">صدر مسير الرواتب أو جداول الغيابات كشيت Excel جاهز للأنظمة المالية الخارجية أو اطبع النسخ كتقارير PDF أنيقة.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 2: Fingerprint File structure -->
+          <div class="help-card p-4" id="section-punches" style="border-right: 4px solid #10b981;">
+            <div class="d-flex align-items-center gap-3 mb-4">
+              <div class="help-icon-wrapper bg-success-subtle text-success">
+                <i class="bi bi-file-spreadsheet"></i>
+              </div>
+              <div>
+                <h4 class="fw-bold text-dark m-0">ثانياً: آلية قراءة ملف البصمات الشهرية الخام</h4>
+                <p class="text-muted small m-0">فهم بنية ملف الاستيراد المعتمد للبصمة وكيفية توزيعه وتثبيته في خلايا الزمن الأربعة.</p>
+              </div>
+            </div>
+
+            <p class="text-muted small mb-3">
+              يقبل النظام الملفات المصدرية من أجهزة البصمة التي تحتوي على التركيبة التالية لجميع العمليات التاريخية المسجلة:
+            </p>
+
+            <div class="table-responsive mb-4">
+              <table class="table table-bordered table-sm table-striped text-center mb-0" style="font-size: 0.8rem;">
+                <thead>
+                  <tr class="table-success">
+                    <th>الرقم الوظيفي</th>
+                    <th>اسم الموظف</th>
+                    <th>التاريخ</th>
+                    <th>الوقت</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="font-monospace fw-bold">EMP1001</td>
+                    <td>أحمد محمود العتيبي</td>
+                    <td>15/06/2026</td>
+                    <td class="font-monospace text-primary fw-bold">07:58</td>
+                  </tr>
+                  <tr>
+                    <td class="font-monospace fw-bold">EMP1001</td>
+                    <td>أحمد محمود العتيبي</td>
+                    <td>15/06/2026</td>
+                    <td class="font-monospace text-danger fw-bold">12:02</td>
+                  </tr>
+                  <tr>
+                    <td class="font-monospace fw-bold">EMP1001</td>
+                    <td>أحمد محمود العتيبي</td>
+                    <td>15/06/2026</td>
+                    <td class="font-monospace text-primary fw-bold">12:55</td>
+                  </tr>
+                  <tr>
+                    <td class="font-monospace fw-bold">EMP1001</td>
+                    <td>أحمد محمود العتيبي</td>
+                    <td>15/06/2026</td>
+                    <td class="font-monospace text-danger fw-bold">17:01</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="p-3 bg-light rounded border border-success-subtle mb-3">
+              <h6 class="fw-bold text-dark mb-2"><i class="bi bi-gear-wide-connected text-success ms-1"></i> آلية المعالجة وتثبيت النقاط:</h6>
+              <ul class="text-muted small mb-0 fs-7" style="line-height:1.7;">
+                <li>يقوم النظام بدمج البصمات وترتيبها زمنياً لكل موظف وتاريخ محدد.</li>
+                <li><strong>الوردية الثنائية (SH-01):</strong> يوزع النظام البصمات الأربعة على الترتيب: 
+                  <strong>بصمة 1</strong> &larr; دخول 1، 
+                  <strong>بصمة 2</strong> &larr; خروج 1، 
+                  <strong>بصمة 3</strong> &larr; دخول 2، 
+                  <strong>بصمة 4</strong> &larr; خروج 2.
+                </li>
+                <li><strong>الوردية المستمرة (SH-02, SH-03):</strong> يوزع النظام البصمتين الأساسيتين على الترتيب: 
+                  <strong>بصمة 1</strong> &larr; دخول 1، 
+                  <strong>بصمة 2</strong> &larr; خروج 1، ويترك خلايا الدوران الثاني خالية تماماً لتسهيل العملية الحسابية.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- SECTION 3: Special Cases -->
+          <div class="help-card p-4" id="section-exceptions" style="border-right: 4px solid #f59e0b;">
+            <div class="d-flex align-items-center gap-3 mb-4">
+              <div class="help-icon-wrapper bg-warning-subtle text-warning">
+                <i class="bi bi-shield-slash-fill"></i>
+              </div>
+              <div>
+                <h4 class="fw-bold text-dark m-0">ثالثاً: آلية معالجة وقوانين الفحص للحالات الاستثنائية</h4>
+                <p class="text-muted small m-0">كيف يعالج المحرك الحسابي حالات التأخر، السقوط لبعض البصمات، أو الحسابات الزائدة والخصم العادل.</p>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-white border border-warning rounded h-100">
+                  <h6 class="fw-bold text-dark mb-1"><i class="bi bi-hourglass-split text-warning ms-1"></i> دقائق التأخر (Delays)</h6>
+                  <p class="text-muted small m-0">تُحتسب إذا تخطى الموظف موعد وريدته بالإضافة لفترة السماح. يحسب وقت التأخير كاملاً من الدقيقة الأولى وتخصم قيمة التأخر من الراتب الفردي.</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-white border border-danger rounded h-100">
+                  <h6 class="fw-bold text-dark mb-1"><i class="bi bi-telephone-x text-danger ms-1"></i> الغياب التام (Absence)</h6>
+                  <p class="text-muted small m-0">يعتبر الموظف غائباً بدون عذر وبمعدل يوم عمل كامل إذا لم توجد له بصمات أو مبرر رسمي مسبق (كالإجازات أو بطاقات الالتزام الأخرى).</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-white border border-info rounded h-100">
+                  <h6 class="fw-bold text-dark mb-1"><i class="bi bi-patch-exclamation text-info ms-1"></i> بصمة ناقصة (Missing)</h6>
+                  <p class="text-muted small m-0">إذا كانت البصمات أقل من المطلوب كخروج غائب. تظهر الخلية بلون أصفر منبه لتتم معالجتها يدوياً كحقوقي للمنظمة.</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-white border border-dark rounded h-100">
+                  <h6 class="fw-bold text-dark mb-1"><i class="bi bi-arrows-expand text-secondary ms-1"></i> بصمات زائدة (Overflow)</h6>
+                  <p class="text-muted small m-0">في بيئة العمل قد يوقع الموظف أكثر من 4 مرات. يحلل النظام البصمات ويلتقط أول بصمتين للصباح وآخر بصمتين بالمساء، منبهاً في التقرير لحذف البقية الكثيرة.</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-white border border-success rounded h-100">
+                  <h6 class="fw-bold text-dark mb-1"><i class="bi bi-calendar-check text-success ms-1"></i> تبرير الإجازات والغياب</h6>
+                  <p class="text-muted small m-0">في أيام غياب الموظفين بعذر، يتم حفظ الأسباب مثل (إجازة سنوية، عطلة مرضية، أو تبرير رسمي كغياب بعذر) لتجاهل الخصم في مسودة الرواتب.</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <div class="p-3 bg-white border border-danger rounded h-100">
+                  <h6 class="fw-bold text-dark mb-1"><i class="bi bi-person-x-fill text-danger ms-1"></i> أرقام مجهولة (Unknown ID)</h6>
+                  <p class="text-muted small m-0">يبعد المعالج سجلات الموظفين مجهولي الأرقام الوظيفية تفادياً لأخطاء المحاسبات، ويطبع قائمة كاملة بها لربط الموظف مجدداً بالقسم الصحيح.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 4: System Administration Guide -->
+          <div class="help-card p-4" id="section-admin" style="border-right: 4px solid #3b82f6;">
+            <div class="d-flex align-items-center gap-3 mb-4">
+              <div class="help-icon-wrapper bg-info-subtle text-info">
+                <i class="bi bi-display"></i>
+              </div>
+              <div>
+                <h4 class="fw-bold text-dark m-0">رابعاً: دليل مسؤول النظام والجدولة الزمنية</h4>
+                <p class="text-muted small m-0">تقسيم المهام والواجبات الزمنية الرقابية لتثبيت الهيكلة وإكمال مسارات الأجور شهرياً.</p>
+              </div>
+            </div>
+
+            <div class="row g-4 fs-7 text-muted" style="line-height:1.7;">
+              <div class="col-md-4">
+                <div class="p-3 bg-light rounded border border-primary-subtle h-100">
+                  <h6 class="fw-bold text-primary mb-2"><i class="bi bi-check2-circle"></i> تضبط لمرة واحدة فقط:</h6>
+                  <ul class="ps-3 mb-0" style="list-style-type: arabic-indic;">
+                    <li>تنصيب ومراجعة أنواع الورديات بالمنشأة (الدوام الثنائي والمستمر).</li>
+                    <li>تسجيل أسماء الكادر، رواتبهم المخصصة، وأرصدة إجازاتهم السنوية الأساسية.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="p-3 bg-light rounded border border-success-subtle h-100">
+                  <h6 class="fw-bold text-success mb-2"><i class="bi bi-calendar2-day-fill"></i> دورة الرقابة اليومية:</h6>
+                  <ul class="ps-3 mb-0">
+                    <li>مراقبة التبريرات والغياب الطارئ وإدخال طلبات الإجازات اليومية المعتمدة.</li>
+                    <li>متابعة البصمات الناقصة أولاً بأول وحل مشكلات التوقيت بالمنشأة.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="p-3 bg-light rounded border border-warning-subtle h-100">
+                  <h6 class="fw-bold text-warning mb-2"><i class="bi bi-calendar2-month-fill"></i> دورة العمل الشهرية:</h6>
+                  <ul class="ps-3 mb-0">
+                    <li>سحب ملف البصمات الشهرية واستيراده.</li>
+                    <li>تأكيد حفظ ومطابقة البيانات لجميع الموظفين.</li>
+                    <li>تشغيل مسير الرواتب وحساب الغرامات ثم ترحيله وتصدير ملف البنك Excel.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-3 bg-light rounded border mt-3">
+              <h6 class="fw-bold text-dark mb-2"><i class="bi bi-safe-fill text-primary ms-1"></i> النسخ الاحتياطي وإجراءات الطوارئ:</h6>
+              <p class="text-muted small m-0 mb-2">
+                يدعم النظام التشغيل غير المتصل بالإنترنت بنسبة 100% ويحفظ تقدمك محلياً في الذاكرة التخزينية للمتصفح (LocalStorage).
+              </p>
+              <ul class="text-muted small mb-0" style="line-height:1.6;">
+                <li><strong>النسخ الاحتياطي (Backups / Exports):</strong> قم بتصدير شيت الموظفين والورديات وسجلات حضورك ومسير الرواتب المنتهية والاحتفاظ بالملفات فى مجلد آمن على حاسوبك.</li>
+                <li><strong>الترميم للمعلومات (Restore Data):</strong> في حال تم ترقية جهاز الكمبيوتر أو حدوث تصفير لبيانات المتصفح، فقط قم باستيراد الورديات الممنوحة، ثم الموظفين، ثم جدول البصمات الشهرية لتُربط المعلومات كاملة من جديد.</li>
+                <li><strong>تصفير قاعدة البيانات:</strong> في حال البداية بملفات حقيقية مستقلة وتخصيص النظام لشركتك، يرجى الضغط على زر <strong>"حذف جميع البيانات التجريبية والمحلية"</strong> في الصفحة الرئيسية لتهيئة النظام بشكل نقي ومريح.</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Script imports -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- App logics -->
+    <script type="module" src="../js/storage.js"></script>
+    <script type="module" src="../js/app.js"></script>
+  </body>
+</html>

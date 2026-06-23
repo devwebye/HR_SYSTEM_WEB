@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>طلبات الإجازات | نظام إدارة الحضور والانصراف والرواتب</title>
+    <!-- CDN Stylesheets -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
+    <link href="../css/style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Hidden element strictly telling the javascript router that this is the leaves page -->
+    <div id="leaves-page-indicator" style="display:none"></div>
+
+    <div class="app-wrapper">
+      <!-- Dynamic Sidebar Container -->
+      <div id="sidebar-container"></div>
+
+      <!-- Main Action Wrapper -->
+      <div class="main-content">
+        <!-- Dynamic Header Container -->
+        <div id="header-container"></div>
+
+        <div class="content-body">
+          
+          <!-- Page Header Info -->
+          <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div>
+              <h3 class="fw-bold m-0 text-dark">سجلات وإثباتات الإجازات</h3>
+              <p class="text-muted m-0">تتبع الإجازات السنوية، المرضية، الإجازات بدون راتب، وخصم الأرصدة تلقائياً من الموظفين.</p>
+            </div>
+            
+            <!-- Excel Action buttons -->
+            <div class="d-flex gap-2">
+              <button class="btn btn-outline-success d-flex align-items-center gap-2" id="export-leaves">
+                <i class="bi bi-file-earmark-excel"></i>
+                <span>تصدير الطلبات</span>
+              </button>
+              
+              <div class="position-relative overflow-hidden">
+                <button class="btn btn-success d-flex align-items-center gap-2">
+                  <i class="bi bi-file-earmark-arrow-up"></i>
+                  <span>استيراد إجازات</span>
+                </button>
+                <input type="file" id="import-leaves-file" accept=".xlsx, .xls" class="position-absolute top-0 start-0 opacity-0 cursor-pointer h-100 w-100" />
+              </div>
+
+              <button class="btn btn-primary d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#leaveModal" onclick="renderEmployeesLeaveDropdown()">
+                <i class="bi bi-calendar2-plus-fill"></i>
+                <span>تقديم طلب إجازة</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Dynamic Filter Bar Section -->
+          <div class="card p-3 custom-table-card mb-4">
+            <div class="row g-3 align-items-center">
+              <div class="col-md-4">
+                <div class="input-group">
+                  <span class="input-group-text bg-white border-end-0 text-muted">
+                    <i class="bi bi-search"></i>
+                  </span>
+                  <input type="text" class="form-control border-start-0 shadow-none ps-0" id="search-leave" placeholder="البحث برقم الوظيفة أو الاسم..." />
+                </div>
+              </div>
+              <div class="col-md-4">
+                <select class="form-select shadow-none" id="filter-leave-type">
+                  <option value="">كل أنواع الإجازات</option>
+                  <option value="إجازة سنوية">إجازة سنوية</option>
+                  <option value="إجازة مرضية">إجازة مرضية</option>
+                  <option value="إجازة بدون راتب">إجازة بدون راتب</option>
+                  <option value="غياب بعذر">غياب بعذر</option>
+                  <option value="أخرى">أخرى</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Batch Actions Panel -->
+          <div id="batch-actions-panel" class="card p-3 mb-3 bg-light border d-none">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <div class="d-flex align-items-center gap-3">
+                <span class="fw-bold text-dark">العمليات الجماعية:</span>
+                <span id="selected-count-badge" class="badge bg-primary fs-6 py-2 px-3">محدد: 0 إجازة</span>
+              </div>
+              <div class="d-flex gap-2">
+                <button id="btn-select-all" class="btn btn-sm btn-outline-secondary">تحديد الكل</button>
+                <button id="btn-deselect-all" class="btn btn-sm btn-outline-secondary">إلغاء التحديد</button>
+                <button id="btn-delete-selected" class="btn btn-sm btn-danger">حذف المحدد</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table Card -->
+          <div class="card custom-table-card">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0" id="leaves-table">
+                <thead>
+                  <tr>
+                    <th style="width: 40px"><input type="checkbox" id="select-all-leaves" class="form-check-input" /></th>
+                    <th>ت</th>
+                    <th>الرقم الوظيفي</th>
+                    <th>اسم الموظف</th>
+                    <th>القسم</th>
+                    <th>نوع الإجازة</th>
+                    <th>تاريخ الإجازة</th>
+                    <th class="text-center">إجمالي الأيام</th>
+                    <th>مصدر الإجازة</th>
+                    <th>تفاصيل الملاحظة</th>
+                    <th>العمليات</th>
+                  </tr>
+                </thead>
+                <tbody id="leaves-tbody">
+                  <!-- Leaves loads dynamically from leaves.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Form (For adding leaves requests) -->
+    <div class="modal fade" id="leaveModal" tabindex="-1" aria-labelledby="modal-leave-title" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold" id="modal-leave-title">تقديم وتسجيل طلب إجازة</h5>
+            <button type="button" class="btn-close ms-0 me-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form id="leave-form">
+            <div class="modal-body p-4">
+              <div class="row g-3">
+                
+                <!-- Employee select option -->
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">اختر الموظف صاحب الطلب <span class="text-danger">*</span></label>
+                  <select class="form-select" id="leave-emp" required>
+                    <!-- Loaded dynamically from leaves.js -->
+                  </select>
+                </div>
+
+                <!-- Leave Type -->
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">نوع الإجازة <span class="text-danger">*</span></label>
+                  <select class="form-select" id="leave-type" required>
+                    <option value="" disabled selected>حدد نوع الإجازة المعتمدة...</option>
+                    <option value="إجازة سنوية">إجازة سنوية (يخصم من رصيد الموظف)</option>
+                    <option value="إجازة مرضية">إجازة مرضية (بعذر طبي)</option>
+                    <option value="إجازة بدون راتب">إجازة بدون راتب (خصم اليوم من الراتب الحالي)</option>
+                    <option value="غياب بعذر">غياب بعذر مسبق</option>
+                  </select>
+                </div>
+
+                <!-- Date start -->
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">تاريخ بداية الإجازة <span class="text-danger">*</span></label>
+                  <input type="date" class="form-control" id="leave-start" required />
+                </div>
+
+                <!-- Date end -->
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">تاريخ نهاية الإجازة <span class="text-danger">*</span></label>
+                  <input type="date" class="form-control" id="leave-end" required />
+                </div>
+
+                <!-- Estimated days count (Calculated on the fly, read-only) -->
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">عدد أيام الإجازة الكلي</label>
+                  <input type="number" class="form-control font-mono fw-bold" id="leave-days" readonly value="0" />
+                  <div class="form-text small text-muted">يتم حساب تتابع الأيام شاملاً تاريخ البداية والنهاية.</div>
+                </div>
+
+                <!-- Notes -->
+                <div class="col-md-12">
+                  <label class="form-label fw-semibold">الملاحظات وتفاصيل التبرير</label>
+                  <textarea class="form-control" id="leave-notes" rows="3" placeholder="ملاحظات تفصيلية أو مسببات تقديم الطلب..."></textarea>
+                </div>
+
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+              <button type="submit" class="btn btn-primary px-4">إرسال وتوثيق الطلب</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Script imports -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- App logics -->
+    <script type="module" src="../js/storage.js"></script>
+    <script type="module" src="../js/importExport.js"></script>
+    <script type="module" src="../js/app.js"></script>
+    <script type="module" src="../js/leaves.js"></script>
+  </body>
+</html>

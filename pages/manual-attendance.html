@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إدخال البصمات اليدوي | نظام إدارة الحضور والانصراف والرواتب</title>
+    <!-- CDN Stylesheets -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
+    <link href="../css/style.css" rel="stylesheet" />
+    <style>
+      /* Style specific to manual entry page */
+      .search-results-box {
+        position: absolute;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1000;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        display: none;
+      }
+      .search-results-box .result-item {
+        padding: 8px 12px;
+        cursor: pointer;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .search-results-box .result-item:hover {
+        background-color: #f3f4f6;
+      }
+      .search-results-box .result-item:last-child {
+        border-bottom: none;
+      }
+      .table-attendance-container {
+        overflow-x: auto;
+        max-height: 500px;
+      }
+      .table-attendance th, .table-attendance td {
+        vertical-align: middle;
+        text-align: center;
+        white-space: nowrap;
+        font-size: 0.8rem;
+      }
+      .table-attendance thead {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: #f8fafc;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hidden indicator for JS router -->
+    <div id="manual-attendance-page-indicator" style="display:none"></div>
+
+    <div class="app-wrapper">
+      <!-- Dynamic Sidebar Container -->
+      <div id="sidebar-container"></div>
+
+      <!-- Main Action Wrapper -->
+      <div class="main-content">
+        <!-- Dynamic Header Container -->
+        <div id="header-container"></div>
+
+        <div class="content-body">
+          
+          <!-- Page Header Info -->
+          <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div>
+              <h3 class="fw-bold m-0 text-dark">إدخال بصمات الموظفين اليدوي ⏱️</h3>
+              <p class="text-muted m-0">تتيح لك هذه الصفحة إدخال بصمات حضور وانصراف الموظفين يدوياً وتلقائياً مع معالجة ذكية للوقت والدوام الليلي.</p>
+            </div>
+          </div>
+
+          <div class="row g-4 mb-4">
+            
+            <!-- Manual Entry Form Card -->
+            <div class="col-lg-5">
+              <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-primary text-white py-3">
+                  <h5 class="card-title m-0 fw-bold d-flex align-items-center gap-2">
+                    <i class="bi bi-pencil-square"></i>
+                    <span>استمارة تسجيل بصمة يدوية</span>
+                  </h5>
+                </div>
+                <div class="card-body p-4">
+                  <form id="form-manual-attendance" autocomplete="off" onsubmit="return false;">
+                    
+                    <!-- Search Employee Box -->
+                    <div class="mb-3 position-relative">
+                      <label for="employee-search-input" class="form-label fw-bold small text-dark">البحث عن الموظف (بالاسم أو الرقم الوظيفي)</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-light text-muted"><i class="bi bi-search"></i></span>
+                        <input type="text" id="employee-search-input" class="form-control" placeholder="اكتب للبحث..." />
+                      </div>
+                      <div id="employee-search-results" class="search-results-box"></div>
+                    </div>
+
+                    <!-- Selected Employee Dropdown / Details -->
+                    <div class="mb-3">
+                      <label for="employee-select" class="form-label fw-bold small text-dark">قائمة الموظفين</label>
+                      <select id="employee-select" class="form-select">
+                        <option value="">-- اختر الموظف من القائمة --</option>
+                      </select>
+                    </div>
+
+                    <div class="row g-2 mb-3 bg-light p-3 rounded border">
+                      <div class="col-6">
+                        <span class="text-muted small d-block mb-1">الرقم الوظيفي:</span>
+                        <strong class="text-dark" id="display-emp-no">--</strong>
+                      </div>
+                      <div class="col-6">
+                        <span class="text-muted small d-block mb-1">الاسم الكامل:</span>
+                        <strong class="text-primary" id="display-emp-name">--</strong>
+                      </div>
+                    </div>
+
+                    <!-- Date field -->
+                    <div class="mb-3">
+                      <label for="punch-date" class="form-label fw-bold small text-dark">تاريخ البصمة</label>
+                      <input type="date" id="punch-date" class="form-control" required />
+                    </div>
+
+                    <!-- Time field with smart text formatting -->
+                    <div class="mb-3">
+                      <label for="punch-time" class="form-label fw-bold small text-dark">الوقت (صيغة 24 ساعة)</label>
+                      <input type="text" id="punch-time" class="form-control font-mono text-center fs-5" placeholder="مثال: 830، 1545، 700" required />
+                      <div class="form-text text-muted small" style="font-size:0.75rem;">
+                        <i class="bi bi-lightning-fill text-warning me-1"></i>
+                        يدعم الإدخال الذكي: <span class="badge bg-secondary font-mono">830</span> تتحول إلى <span class="badge bg-primary font-mono">08:30</span>، و <span class="badge bg-secondary font-mono">1530</span> تتحول إلى <span class="badge bg-primary font-mono">15:30</span>.
+                      </div>
+                    </div>
+
+                    <!-- Punch placement selector -->
+                    <div class="mb-4">
+                      <label for="punch-type" class="form-label fw-bold small text-dark">نوع البصمة / خانة الحفظ</label>
+                      <select id="punch-type" class="form-select">
+                        <option value="auto">توزيع تلقائي (حسب الترتيب الزمني اليومي)</option>
+                        <option value="checkIn1">بصمة دخول أولى (Check-In 1)</option>
+                        <option value="checkOut1">بصمة خروج أولى (Check-Out 1)</option>
+                        <option value="checkIn2">بصمة دخول ثانية (Check-In 2)</option>
+                        <option value="checkOut2">بصمة خروج ثانية (Check-Out 2)</option>
+                      </select>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex gap-2">
+                      <button type="submit" id="btn-save-punch" class="btn btn-primary w-100 py-2.5 fw-bold d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>حفظ البصمة وتسجيل السجل</span>
+                      </button>
+                      <button type="button" id="btn-reset-form" class="btn btn-outline-secondary px-3">
+                        <i class="bi bi-arrow-counterclockwise fs-5"></i>
+                      </button>
+                    </div>
+
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Filters & Attendance Grid Column -->
+            <div class="col-lg-7">
+              <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                  <h5 class="card-title m-0 fw-bold d-flex align-items-center gap-2">
+                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                    <span>سجل البصمات لشهر يونيو 2026</span>
+                  </h5>
+                  <div class="badge bg-primary px-2 py-1 small fs-7">مزامنة تامة</div>
+                </div>
+                <div class="card-body p-4 d-flex flex-column justify-content-between">
+                  
+                  <!-- Filter Bar -->
+                  <div class="row g-2 mb-3">
+                    <div class="col-md-4">
+                      <select class="form-select form-select-sm" id="select-month">
+                        <option value="01">يناير</option>
+                        <option value="02">فبراير</option>
+                        <option value="03">مارس</option>
+                        <option value="04">أبريل</option>
+                        <option value="05">مايو</option>
+                        <option value="06" selected>يونيو</option>
+                        <option value="07">يوليو</option>
+                        <option value="08">أغسطس</option>
+                        <option value="09">سبتمبر</option>
+                        <option value="10">أكتوبر</option>
+                        <option value="11">نوفمبر</option>
+                        <option value="12">ديسمبر</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <select class="form-select form-select-sm" id="select-year">
+                        <option value="2025">2025</option>
+                        <option value="2026" selected>2026</option>
+                        <option value="2027">2027</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <select class="form-select form-select-sm" id="filter-attendance-dept">
+                        <option value="">جميع الأقسام</option>
+                        <option value="الموارد البشرية">الموارد البشرية</option>
+                        <option value="تقنية المعلومات">تقنية المعلومات</option>
+                        <option value="المالية">المالية</option>
+                        <option value="المبيعات">المبيعات</option>
+                        <option value="العمليات">العمليات</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Quick instruction alert -->
+                  <div class="alert alert-info py-2 px-3 mb-3 border d-flex align-items-center gap-2" style="font-size:0.75rem;">
+                    <i class="bi bi-info-circle-fill text-primary"></i>
+                    <span>
+                      <strong>تلميح ذكي:</strong> يمكنك تعديل البصمات مباشرة من خلايا الجدول أدناه، والضغط على <strong>خارج الحقل</strong> للحفظ التلقائي وإعادة الاحتساب الفوري!
+                    </span>
+                  </div>
+
+                  <!-- Table Grid -->
+                  <div class="table-attendance-container border rounded bg-white p-1 mb-3">
+                    <table class="table-attendance table table-bordered table-striped mb-0 table-hover">
+                      <thead>
+                        <tr id="attendance-thead-days">
+                          <!-- Loaded dynamically -->
+                        </tr>
+                        <tr id="attendance-thead-subheaders">
+                          <!-- Loaded dynamically -->
+                        </tr>
+                      </thead>
+                      <tbody id="attendance-tbody">
+                        <tr>
+                          <td colspan="100%" class="text-center py-4 text-muted">يرجى الانتظار بينما يتم تعبئة الجدول...</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <button id="recalc-attendance" class="btn btn-sm btn-outline-primary d-flex align-items-center gap-2">
+                      <i class="bi bi-cpu-fill"></i>
+                      <span>إعادة احتساب المؤشرات والرواتب للشهر الحالي</span>
+                    </button>
+                    <button id="btn-delete-all-punches" class="btn btn-sm btn-outline-danger d-flex align-items-center gap-2">
+                      <i class="bi bi-trash3"></i>
+                      <span>تصفير بصمات اليوم للموظفين</span>
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Script imports -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- App logics -->
+    <script type="module" src="../js/storage.js"></script>
+    <script type="module" src="../js/importExport.js"></script>
+    <script type="module" src="../js/app.js"></script>
+    <script type="module" src="../js/manual-attendance.js"></script>
+  </body>
+</html>

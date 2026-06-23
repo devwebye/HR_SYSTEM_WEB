@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الحضور اليومي السريع | نظام إدارة الحضور والانصراف والرواتب</title>
+    <!-- CDN Stylesheets -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
+    <link href="../css/style.css" rel="stylesheet" />
+    <style>
+      /* spreadsheet styling */
+      .spreadsheet-container {
+        overflow-x: auto;
+        max-height: 600px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background-color: #fff;
+      }
+      .spreadsheet-table {
+        margin-bottom: 0;
+        border-collapse: collapse;
+        width: 100%;
+      }
+      .spreadsheet-table th {
+        background-color: #f1f5f9;
+        color: #1e293b;
+        font-weight: 700;
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        font-size: 0.85rem;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .spreadsheet-table td {
+        padding: 0 !important;
+        border: 1px solid #cbd5e1;
+        vertical-align: middle;
+        position: relative;
+      }
+      .spreadsheet-table input[type="text"] {
+        width: 100%;
+        height: 38px;
+        border: none;
+        padding: 6px 10px;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        font-size: 0.85rem;
+        text-align: center;
+        background-color: transparent;
+        transition: background-color 0.15s ease;
+      }
+      .spreadsheet-table input[type="text"]:focus {
+        outline: 2px solid #3b82f6 !important;
+        background-color: #eff6ff !important;
+        z-index: 5;
+      }
+      .spreadsheet-table select {
+        width: 100%;
+        height: 38px;
+        border: none;
+        padding: 4px 8px;
+        font-size: 0.8rem;
+        background-color: transparent;
+      }
+      .spreadsheet-table select:focus {
+        outline: 2px solid #3b82f6 !important;
+        background-color: #eff6ff !important;
+      }
+      .row-num {
+        background-color: #f8fafc;
+        color: #64748b;
+        font-weight: 600;
+        text-align: center;
+        width: 40px;
+        user-select: none;
+      }
+      .cell-readonly {
+        background-color: #f8fafc;
+        color: #334155;
+        font-size: 0.8rem;
+        padding: 8px 12px !important;
+        text-align: center;
+      }
+      .active-row {
+        background-color: #f0f9ff !important;
+      }
+      /* Excel paste drawer instruction */
+      .paste-area-box {
+        border: 2px dashed #3b82f6;
+        background-color: #eff6ff;
+        border-radius: 8px;
+        padding: 15px;
+        transition: all 0.2s ease;
+      }
+      .paste-area-box:hover {
+        background-color: #dbeafe;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hidden indicator for JS router -->
+    <div id="quick-attendance-page-indicator" style="display:none"></div>
+
+    <div class="app-wrapper">
+      <!-- Dynamic Sidebar Container -->
+      <div id="sidebar-container"></div>
+
+      <!-- Main Action Wrapper -->
+      <div class="main-content">
+        <!-- Dynamic Header Container -->
+        <div id="header-container"></div>
+
+        <div class="content-body">
+          
+          <!-- Page Header Info -->
+          <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div>
+              <h3 class="fw-bold m-0 text-dark">الحضور اليومي السريع ⚡</h3>
+              <p class="text-muted m-0">طريقة فائقة السرعة لإدخال وتعديل بصمات الموظفين اليومية، مع دعم اللصق المباشر من Excel والتنقل بدون ماوس.</p>
+            </div>
+            
+            <div class="d-flex gap-2">
+              <a href="attendance.html" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+                <span>عرض شيت الحضور</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Configuration & Trigger Card -->
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body p-4">
+              <div class="row align-items-center g-3">
+                
+                <!-- Date range selectors -->
+                <div class="col-md-5">
+                  <div class="row g-2">
+                    <div class="col-6">
+                      <label for="quick-attendance-from-date" class="form-label fw-bold small text-dark">من تاريخ</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-light py-1 px-2"><i class="bi bi-calendar-event"></i></span>
+                        <input type="date" id="quick-attendance-from-date" class="form-control" />
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <label for="quick-attendance-to-date" class="form-label fw-bold small text-dark">إلى تاريخ</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-light py-1 px-2"><i class="bi bi-calendar-check"></i></span>
+                        <input type="date" id="quick-attendance-to-date" class="form-control" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Load buttons -->
+                <div class="col-md-4 d-flex gap-2 align-self-end">
+                  <button id="btn-load-active-employees" class="btn btn-primary fw-bold px-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-people-fill"></i>
+                    <span>تحميل الموظفين النشطين</span>
+                  </button>
+                  <button id="btn-add-blank-row" class="btn btn-outline-secondary fw-semibold d-flex align-items-center gap-2">
+                    <i class="bi bi-plus-lg"></i>
+                    <span>إضافة صف فارغ جديد</span>
+                  </button>
+                </div>
+
+                <!-- Live Status Indicators -->
+                <div class="col-md-3 text-md-end text-start align-self-end">
+                  <span class="text-muted small">إجمالي الصفوف الحالية: </span>
+                  <span id="rows-count-badge" class="badge bg-secondary fs-6 font-mono">0</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Excel Paste Instructions Accordion -->
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-3 bg-light rounded border">
+              <div class="d-flex align-items-center justify-content-between cursor-pointer" data-bs-toggle="collapse" data-bs-target="#pasteInstructionsCollapse" style="cursor: pointer;">
+                <div class="d-flex align-items-center gap-2">
+                  <i class="bi bi-info-circle-fill text-primary fs-5"></i>
+                  <strong class="text-dark">ميزة اللصق المباشر السريع من Excel (اضغط لقراءة التعليمات 💡)</strong>
+                </div>
+                <i class="bi bi-chevron-down text-secondary"></i>
+              </div>
+              <div class="collapse mt-3" id="pasteInstructionsCollapse">
+                <div class="row g-3">
+                  <div class="col-md-7">
+                    <p class="text-muted small mb-2">
+                      يمكنك نسخ بيانات الحضور مباشرة من جدول Excel ولصقها هنا بضغطة واحدة!
+                    </p>
+                    <ol class="small text-muted ps-3 mb-0">
+                      <li>افتح ملف الـ Excel الخاص بك.</li>
+                      <li>حدد الأعمدة بالترتيب التالي: <strong>الرقم الوظيفي</strong>، <strong>دخول 1</strong>، <strong>خروج 1</strong>، <strong>دخول 2</strong>، <strong>خروج 2</strong>.</li>
+                      <li>قم بنسخها (Ctrl+C).</li>
+                      <li>اضغط على أي خلية داخل الجدول أدناه، ثم اضغط <strong>(Ctrl+V)</strong> أو <strong>(Cmd+V)</strong> للصقها فوراً!</li>
+                    </ol>
+                  </div>
+                  <div class="col-md-5">
+                    <div class="paste-area-box text-center">
+                      <i class="bi bi-clipboard2-plus-fill text-primary fs-3 d-block mb-1"></i>
+                      <span class="small fw-bold text-dark d-block">منطقة اللصق التجريبية</span>
+                      <span class="text-muted small" style="font-size:0.7rem;">يمكنك اللصق هنا أيضاً لتوزيع البيانات تلقائياً على الجدول</span>
+                      <textarea id="paste-direct-textarea" class="form-control form-control-sm mt-2" placeholder="اضغط هنا ثم الصق (Ctrl+V)" style="height: 50px; font-size: 0.75rem; text-align: center; resize: none;"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Spreadsheet Grid -->
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-table"></i>
+                <h5 class="card-title m-0 fw-bold">جدول الإدخال السريع الشبيه بـ Excel 📊</h5>
+              </div>
+              <div class="d-flex gap-2">
+                <button id="btn-clear-table" class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1">
+                  <i class="bi bi-trash3"></i>
+                  <span>تصفير الجدول</span>
+                </button>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              
+              <div class="spreadsheet-container">
+                <table id="quick-attendance-table" class="spreadsheet-table table table-bordered">
+                  <thead>
+                    <tr>
+                      <th style="width: 45px;">#</th>
+                      <th style="width: 120px;">التاريخ *</th>
+                      <th style="width: 130px;">الرقم الوظيفي *</th>
+                      <th>اسم الموظف</th>
+                      <th style="width: 140px;">الوردية</th>
+                      <th style="width: 110px; color: #2563eb;">دخول 1</th>
+                      <th style="width: 110px; color: #dc2626;">خروج 1</th>
+                      <th style="width: 110px; color: #2563eb;">دخول 2</th>
+                      <th style="width: 110px; color: #dc2626;">خروج 2</th>
+                      <th style="width: 150px;">السبب</th>
+                      <th>ملاحظات</th>
+                      <th style="width: 50px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="quick-attendance-tbody">
+                    <!-- Loaded dynamically or manually added -->
+                    <tr>
+                      <td colspan="12" class="text-center py-5 text-muted bg-white">
+                        <i class="bi bi-people fs-2 d-block mb-2 text-secondary"></i>
+                        <span>الجدول فارغ حالياً. اضغط على <strong>تحميل الموظفين النشطين</strong> لجلبهم تلقائياً، أو <strong>إضافة صف فارغ جديد</strong> للبدء بالكتابة أو اللصق.</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Action & Validation Dashboard -->
+          <div class="row g-4 mb-4">
+            
+            <!-- Keyboards shortcuts helper -->
+            <div class="col-lg-5">
+              <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-secondary text-white py-3">
+                  <h6 class="m-0 fw-bold"><i class="bi bi-keyboard-fill me-2"></i> اختصارات لوحة المفاتيح للتنقل السريع</h6>
+                </div>
+                <div class="card-body p-4 bg-light">
+                  <div class="row g-2 font-mono small">
+                    <div class="col-6 d-flex justify-content-between border-bottom pb-1 mb-1">
+                      <span class="text-muted">للتنقل للأسفل:</span>
+                      <kbd class="bg-dark text-white">Enter</kbd>
+                    </div>
+                    <div class="col-6 d-flex justify-content-between border-bottom pb-1 mb-1">
+                      <span class="text-muted">للتنقل لليسار:</span>
+                      <kbd class="bg-dark text-white">Tab</kbd>
+                    </div>
+                    <div class="col-6 d-flex justify-content-between border-bottom pb-1 mb-1">
+                      <span class="text-muted">الخلية اليمنى:</span>
+                      <kbd class="bg-dark text-white"><i class="bi bi-arrow-right"></i></kbd>
+                    </div>
+                    <div class="col-6 d-flex justify-content-between border-bottom pb-1 mb-1">
+                      <span class="text-muted">الخلية اليسرى:</span>
+                      <kbd class="bg-dark text-white"><i class="bi bi-arrow-left"></i></kbd>
+                    </div>
+                    <div class="col-6 d-flex justify-content-between border-bottom pb-1 mb-1">
+                      <span class="text-muted">الخلية العلوية:</span>
+                      <kbd class="bg-dark text-white"><i class="bi bi-arrow-up"></i></kbd>
+                    </div>
+                    <div class="col-6 d-flex justify-content-between border-bottom pb-1 mb-1">
+                      <span class="text-muted">الخلية السفلية:</span>
+                      <kbd class="bg-dark text-white"><i class="bi bi-arrow-down"></i></kbd>
+                    </div>
+                  </div>
+                  <div class="text-muted small mt-3" style="font-size:0.75rem;">
+                    <i class="bi bi-info-circle-fill text-info me-1"></i>
+                    يمكنك كتابة الأوقات بالاختصارات (مثل <code class="fw-bold">800</code> أو <code class="fw-bold">1430</code>) وسيقوم النظام بتنسيقها تلقائياً عند الانتقال لخلية أخرى.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Verification & Report Summary Card -->
+            <div class="col-lg-7">
+              <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-dark text-white py-3">
+                  <h6 class="m-0 fw-bold"><i class="bi bi-shield-check me-2"></i> لوحة التحقق الفوري والحفظ الجماعي</h6>
+                </div>
+                <div class="card-body p-4 d-flex flex-column justify-content-between">
+                  
+                  <div>
+                    <h6 class="fw-bold text-dark mb-3">تقرير فحص البيانات قبل الحفظ:</h6>
+                    
+                    <div class="row g-3 text-center mb-3">
+                      <div class="col-6">
+                        <div class="p-3 border rounded bg-light">
+                          <span class="d-block text-muted small">الصفوف الصالحة للقبول</span>
+                          <span id="valid-rows-count" class="fs-4 fw-bold text-success font-mono">0</span>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="p-3 border rounded bg-light">
+                          <span class="d-block text-muted small">الصفوف المرفوضة (أخطاء)</span>
+                          <span id="invalid-rows-count" class="fs-4 fw-bold text-danger font-mono">0</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Validation error logging list -->
+                    <div id="validation-errors-box" class="alert alert-warning py-2 px-3 small border mb-0 d-none" style="max-height: 120px; overflow-y: auto;">
+                      <strong class="d-block mb-1 text-danger"><i class="bi bi-exclamation-triangle-fill"></i> أخطاء يجب إصلاحها قبل الحفظ:</strong>
+                      <ul id="validation-errors-list" class="mb-0 ps-3">
+                        <!-- Listed dynamically -->
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="d-flex gap-3 mt-4">
+                    <button id="btn-save-all-attendance" class="btn btn-success btn-lg w-100 fw-bold py-3 d-flex align-items-center justify-content-center gap-2 shadow-sm">
+                      <i class="bi bi-cloud-arrow-up-fill fs-5"></i>
+                      <span>حفظ كافة البصمات في السجل الجماعي</span>
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Script imports -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- App logics -->
+    <script type="module" src="../js/storage.js"></script>
+    <script type="module" src="../js/importExport.js"></script>
+    <script type="module" src="../js/app.js"></script>
+    <script type="module" src="../js/quick-attendance.js"></script>
+  </body>
+</html>

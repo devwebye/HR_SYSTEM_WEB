@@ -1,0 +1,6 @@
+{
+  "name": "HR Attendance and Payroll System",
+  "description": "نظام احترافي لإدارة الموظفين، الحضور والانصراف بالورديات المتعددة، الإجازات، وحساب الرواتب والتقارير مع استيراد وتصدير إكسل ورسوم بيانية.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
